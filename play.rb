@@ -1,6 +1,8 @@
 require_relative 'timer'
 
 class Play
+  attr_accessor :game, :start_time
+
   def initialize(game)
     @game = game
   end
@@ -15,12 +17,14 @@ class Play
     input
   end
 
-  def play_again?
-    prompt("Would you like to (p)lay again?")
-    input
+  def play_again
+    prompt("Let's play again!")
+    game = Game.new
+    game.start
   end
 
   def begin(grid, current_player)
+    @start_time = Timer.start
     print_board(grid)
     first_move(current_player)
   end
@@ -33,9 +37,9 @@ class Play
     when input == "I"
       instructions
     when input == "P"
-      @game.begin_play
+      game.begin_play
     else
-      @game.user_move(input)
+      game.user_move(input)
     end
   end
 
@@ -64,9 +68,9 @@ class Play
     input
   end
 
-  def not_valid_prompt
+  def not_valid_prompt(grid, current_player)
     prompt("That's not a valid move.")
-    next_turn
+    next_turn(grid, current_player)
   end
 
   def next_turn(grid, current_player)
@@ -77,19 +81,20 @@ class Play
 
   def winning_sequence
     prompt("You won! Congrats!")
+    print_board(game.grid)
     print_game_time
-    play_again?
+    play_again
   end
 
   def draw
     prompt("It's a draw!")
     print_game_time
-    play_again?
+    play_again
   end
 
   def print_game_time
     timer = Timer.new
-    prompt("This game lasted #{timer.game_time(@game.start_time)}")
+    prompt("This game lasted #{timer.game_time(start_time)}")
   end
 
   def print_board(grid)

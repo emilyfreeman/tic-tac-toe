@@ -6,9 +6,7 @@ class Timer
     "#{minutes} #{minutes_syntax(minutes)} and #{seconds} #{seconds_syntax(seconds)}"
   end
 
-  def guess_syntax
-    guess_count == 1 ? "guess" : "guesses"
-  end
+  private
 
   def minutes_syntax(minutes)
     minutes == 1 ? "minute" : "minutes"
@@ -16,5 +14,9 @@ class Timer
 
   def seconds_syntax(seconds)
     seconds == 1 ? "second" : "seconds"
+  end
+
+  def self.start
+    Time.now
   end
 end

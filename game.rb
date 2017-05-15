@@ -8,35 +8,31 @@ require_relative 'board'
 require_relative 'play'
 
 class Game
-  attr_accessor :move_count, :start_time, :grid, :play
+  attr_accessor :grid, :current_player, :play, :move_count
+
+  VALID_INPUTS = %w( 1 2 3 4 5 6 7 8 9 )
 
   def initialize
     @move_count = 0
-    @start_time = Time.now
     @grid = Board.new
     @current_player = "X"
   end
 
-  def prompt(message)
-    puts "=> #{message}"
-  end
-
   def switch_player
-    if @current_player == "X"
-      @current_player = "O"
+    if current_player == "X"
+      self.current_player = "O"
     else
-      @current_player = "X"
+      self.current_player = "X"
     end
   end
 
   def start
     @play = Play.new(self)
-    @play.start_game
+    play.start_game
   end
 
   def begin_play
-    start_time
-    @play.begin(@grid, @current_player)
+    play.begin(grid, current_player)
   end
 
   def user_move(move)
@@ -45,7 +41,7 @@ class Game
     else
       increment_move_count
       update_board(move)
-      if @move_count >= 5
+      if move_count >= 5
         return winning_sequence if winner?(move)
         return "It's a draw!" if draw?
       end
@@ -55,42 +51,41 @@ class Game
   end
 
   def respond_with_not_valid
-    @play.not_valid_prompt
+    play.not_valid_prompt(grid, current_player)
   end
 
   def next_turn
-    @play.next_turn(@grid, @current_player)
+    play.next_turn(grid, current_player)
   end
 
   def winner?(move)
-    @grid.winner?(move, @current_player)
+    grid.winner?(move, current_player)
   end
 
   def winning_sequence
-    @play.winning_sequence
+    play.winning_sequence
   end
 
   def update_board(move)
-    @grid.update_board(move, @current_player)
+    grid.update_board(move, current_player)
   end
 
   def increment_move_count
-    @move_count += 1
+    self.move_count += 1
   end
 
   def draw?
-    return false unless @grid.full?
-    @play.draw
+    return false unless grid.full?
+    play.draw
   end
 
   def valid?(move)
     valid_input?(move)
-    @grid.eligible_square?(move)
+    grid.eligible_square?(move)
   end
 
   def valid_input?(move)
-    valid_inputs = %w( 1 2 3 4 5 6 7 8 9 )
-    valid_inputs.include?(move)
+    VALID_INPUTS.include?(move)
   end
 
   def integer?(str)

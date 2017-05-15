@@ -31,12 +31,12 @@ class Board
 
   def update_board(move, player)
     coordinates = get_coordinates(move)
-    @grid.each do |sq|
+    grid.each do |sq|
       if sq.keys[0] == coordinates
         sq.values[0].replace(player)
       end
     end
-    @grid
+    grid
   end
 
   def get_coordinates(move)
